@@ -1,9 +1,12 @@
 import { useHistory } from "react-router-dom";
 import headerlogo from "../../img/header-logo.png";
 import banner from "../../img/banner.jpg";
+import { useSelector } from "react-redux";
+import classNames from 'classnames';
 
 export default function Page404() {
   const history = useHistory();
+  const {items} = useSelector((state) => state.cart);
 
   return (
     <div className="Page404">
@@ -47,9 +50,9 @@ export default function Page404() {
                       className="header-controls-pic header-controls-cart"
                       onClick={() => history.push("/cart.html")}
                     >
-                      {localStorage.length > 0 ? (
+                      {items.length > 0 ? (
                         <div className="header-controls-cart-full">
-                          {localStorage.length}
+                          {items.length}
                         </div>
                       ) : null}
                       <div className="header-controls-cart-menu"></div>

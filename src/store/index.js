@@ -5,6 +5,7 @@ import hitsListReducer from "../reducers/HitsList.js";
 import filterReducer from "../reducers/Filter.js";
 import productReducer from "../reducers/Product.js";
 import sendOrderReducer from "../reducers/SendOrder.js";
+import CartReducer from "../reducers/Cart.js";
 
 const reducer = combineReducers({
   hitsList: hitsListReducer,
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   filter: filterReducer,
   product: productReducer,
   sendOrder: sendOrderReducer,
+  cart: CartReducer
 });
 
 const store = createStore(

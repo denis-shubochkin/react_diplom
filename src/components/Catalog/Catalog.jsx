@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import classNames from 'classnames';
 import {
   fetchCatalog,
   fetchCatItems,
@@ -33,6 +34,7 @@ export default function Catalog() {
   const [searchInput, setSearchInput] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const {items} = useSelector((state) => state.cart);
 
   useEffect(() => {
     fetchCatalog(dispatch);
@@ -59,11 +61,8 @@ export default function Catalog() {
 
   const openSearchBar = () => {
     if (searchVisibility) {
-      searchBar.current.classList.add("invisible");
       setSearchVisibility(false);
     } else {
-      searchBar.current.classList.remove("invisible");
-      searchBar.current.querySelector('input').focus();
       setSearchVisibility(true);
     }
   };
@@ -123,9 +122,9 @@ export default function Catalog() {
                       className="header-controls-pic header-controls-cart"
                       onClick={() => history.push("/cart.html")}
                     >
-                      {localStorage.length > 0 ? (
+                      {items.length > 0 ? (
                         <div className="header-controls-cart-full">
-                          {localStorage.length}
+                          {items.length}
                         </div>
                       ) : null}
                       <div className="header-controls-cart-menu"></div>
@@ -133,8 +132,7 @@ export default function Catalog() {
                   </div>
                   <form
                     data-id="search-form"
-                    ref={searchBar}
-                    className="header-controls-search-form form-inline invisible"
+                    className={classNames("header-controls-search-form","form-inline", {"invisible": !searchVisibility})}
                     onSubmit={onSearchSubmit}
                   >
                     <input

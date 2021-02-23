@@ -1,13 +1,14 @@
 import { useDispatch } from "react-redux";
 import { changeActiveCat } from "../../../actions/actionCreators";
 import "./Category.css";
+import classNames from 'classnames';
 
 export default function Category(props) {
   const { data, active } = props;
   const dispatch = useDispatch();
   return (
     <div
-      className={active === data.id ? "Cat Active" : "Cat"}
+      className={classNames('Cat',{Active: active === data.id})}
       onClick={() => {
         dispatch(changeActiveCat(data.id));
       }}

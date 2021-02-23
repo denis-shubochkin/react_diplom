@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendOrder, setGlobalFilter } from "../../actions/actionCreators";
+import { clearCart, removeFromCart, sendOrder, setGlobalFilter } from "../../actions/actionCreators";
 import headerlogo from "../../img/header-logo.png";
 import banner from "../../img/banner.jpg";
 import { useHistory } from "react-router-dom";
+import classNames from 'classnames';
 
 export default function Cart() {
-  const [itemsInCart, setitemsInCart] = useState([]);
+  //const [itemsInCart, setitemsInCart] = useState([]);
   const [inputPhone, setInputPhone] = useState("");
   const [inputAddress, setInputAddress] = useState("");
   const { sended, loading, error } = useSelector((state) => state.sendOrder);
+  const {items} = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const history = useHistory();
   
@@ -18,26 +20,25 @@ export default function Cart() {
   const [searchInput, setSearchInput] = useState("");
 
 
-  useEffect(() => {
-    let keys = Object.keys(localStorage);
-    for (let key of keys) {
-      setitemsInCart((prev) => [
-        ...prev,
-        JSON.parse(localStorage.getItem(key)),
-      ]);
-    }
-  }, []);
+  // useEffect(() => {
+  //   // let keys = Object.keys(localStorage);
+  //   // for (let key of keys) {
+  //   //   setitemsInCart((prev) => [
+  //   //     ...prev,
+  //   //     JSON.parse(localStorage.getItem(key)),
+  //   //   ]);
+  //   // }
+
+  // }, []);
 
   useEffect(() => {
     if (sended) {
-      localStorage.clear();
-      setitemsInCart([]);
+     dispatch(clearCart());
     }
   }, [sended]);
 
   const onDelHandler = (el) => {
-    localStorage.removeItem(el.id);
-    setitemsInCart((prev) => prev.filter((o) => o.id !== el.id));
+    dispatch(removeFromCart(el))
   };
 
   const onInputPhone = (evt) => {
@@ -51,7 +52,7 @@ export default function Cart() {
   const onOrderHandler = (evt) => {
     evt.preventDefault();
     let arr = [];
-    itemsInCart.forEach((el) =>
+    items.forEach((el) =>
       arr.push({
         id: el.data.id,
         price: el.data.price * el.qt,
@@ -138,9 +139,9 @@ export default function Cart() {
                     ></div>
 
                     <div className="header-controls-pic header-controls-cart">
-                      {localStorage.length > 0 ? (
+                      {items.length > 0 ? (
                         <div className="header-controls-cart-full">
-                          {localStorage.length}
+                          {items.length}
                         </div>
                       ) : null}
                       <div className="header-controls-cart-menu"></div>
@@ -148,8 +149,7 @@ export default function Cart() {
                   </div>
                   <form
                     data-id="search-form"
-                    ref={searchBar}
-                    className="header-controls-search-form form-inline invisible"
+                    className={classNames("header-controls-search-form","form-inline", {"invisible": !searchVisibility})}
                     onSubmit={onSearchSubmit}
                   >
                     <input
@@ -190,7 +190,7 @@ export default function Cart() {
                     </tr>
                   </thead>
                   <tbody>
-                    {itemsInCart.map((el, i) => (
+                    {items.map((el, i) => (
                       <tr key={i}>
                         <th scope="row">{i + 1}</th>
                         <td>
@@ -218,7 +218,7 @@ export default function Cart() {
                         Общая стоимость
                       </td>
                       <td>
-                        {itemsInCart.reduce(function (prev, el) {
+                        {items.reduce(function (prev, el) {
                           return prev + el.data.price * el.qt;
                         }, 0)}{" "}
                         руб.

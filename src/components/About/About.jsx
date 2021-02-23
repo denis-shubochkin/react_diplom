@@ -1,26 +1,25 @@
 import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { setGlobalFilter } from "../../actions/actionCreators";
 import headerlogo from "../../img/header-logo.png";
 import banner from "../../img/banner.jpg";
+import classNames from 'classnames';
 
 export default function About() {
-  const searchBar = useRef(null);
   const dispatch = useDispatch();
   const [searchVisibility, setSearchVisibility] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const history = useHistory();
+  const {items} = useSelector((state) => state.cart);
 
   const openSearchBar = () => {
     if (searchVisibility && searchInput) {
       goToCatalog();
     } else if (searchVisibility && !searchInput) {
-      searchBar.current.classList.add("invisible");
+     
       setSearchVisibility(false);
     } else {
-      searchBar.current.classList.remove("invisible");
-      searchBar.current.querySelector('input').focus();
       setSearchVisibility(true);
     }
   };
@@ -83,9 +82,9 @@ export default function About() {
                       className="header-controls-pic header-controls-cart"
                       onClick={() => history.push("/cart.html")}
                     >
-                      {localStorage.length > 0 ? (
+                      {items.length > 0 ? (
                         <div className="header-controls-cart-full">
-                          {localStorage.length}
+                          {items.length}
                         </div>
                       ) : null}
                       <div className="header-controls-cart-menu"></div>
@@ -93,8 +92,7 @@ export default function About() {
                   </div>
                   <form
                     data-id="search-form"
-                    ref={searchBar}
-                    className="header-controls-search-form form-inline invisible"
+                    className={classNames("header-controls-search-form","form-inline", {"invisible": !searchVisibility})}
                     onSubmit={onSearchSubmit}
                   >
                     <input

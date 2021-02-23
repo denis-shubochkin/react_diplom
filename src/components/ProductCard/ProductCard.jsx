@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import classNames from 'classnames';
 import {
   addToCart,
   fetchProduct,
@@ -19,7 +20,8 @@ export default function ProductCard(props) {
   const history = useHistory();
   const [searchVisibility, setSearchVisibility] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const searchBar = useRef(null);
+
+  const {items} = useSelector((state) => state.cart);
 
   useEffect(() => {
     fetchProduct(dispatch, id);
@@ -43,17 +45,7 @@ export default function ProductCard(props) {
   };
 
   const onCartHandler = () => {
-    let qt = counter;
-    if (localStorage.getItem(data.sku + size)) {
-      qt = JSON.parse(localStorage.getItem(data.sku + size)).qt + counter;
-    }
-    const itemToAdd = {
-      id: data.sku + size,
-      data: data,
-      size: size,
-      qt: qt,
-    };
-    localStorage.setItem(data.sku + size, JSON.stringify(itemToAdd));
+    dispatch(addToCart(data, counter, size));
     history.push("/cart.html");
   };
 
@@ -61,11 +53,8 @@ export default function ProductCard(props) {
     if (searchVisibility && searchInput) {
       goToCatalog();
     } else if (searchVisibility && !searchInput) {
-      searchBar.current.classList.add("invisible");
       setSearchVisibility(false);
     } else {
-      searchBar.current.classList.remove("invisible");
-      searchBar.current.querySelector("input").focus();
       setSearchVisibility(true);
     }
   };
@@ -130,9 +119,9 @@ export default function ProductCard(props) {
                         className="header-controls-pic header-controls-cart"
                         onClick={() => history.push("/cart.html")}
                       >
-                        {localStorage.length > 0 ? (
+                        {items.length > 0 ? (
                           <div className="header-controls-cart-full">
-                            {localStorage.length}
+                            {items.length}
                           </div>
                         ) : null}
                         <div className="header-controls-cart-menu"></div>
@@ -140,8 +129,7 @@ export default function ProductCard(props) {
                     </div>
                     <form
                       data-id="search-form"
-                      ref={searchBar}
-                      className="header-controls-search-form form-inline invisible"
+                      className={classNames("header-controls-search-form","form-inline", {"invisible": !searchVisibility})}
                       onSubmit={onSearchSubmit}
                     >
                       <input

@@ -3,6 +3,7 @@ import "./Categories.css";
 import { changeActiveCat } from "../../actions/actionCreators";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
+import classNames from 'classnames';
 
 export default function Categories(props) {
   const {
@@ -68,7 +69,7 @@ export default function Categories(props) {
           ) : null}
           <div className="Categories">
             <div
-              className={active === 0 ? "Cat Active" : "Cat"}
+              className= {classNames('Cat',{Active: active === 0})}
               onClick={() => {
                 dispatch(changeActiveCat(0));
               }}
